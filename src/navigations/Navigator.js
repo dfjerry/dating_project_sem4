@@ -5,6 +5,8 @@ import Home from '../screens/Home';
 import Discussion from '../screens/Discussion';
 import Profile from '../screens/Profile';
 import Chat from '../screens/Chat';
+import Login from '../screens/auth/Login';
+import Register from '../screens/auth/Register';
 import Icon from '@expo/vector-icons/Ionicons';
 import Icon2 from '@expo/vector-icons/Entypo';
 
@@ -44,9 +46,19 @@ const BottomTabNavigator = () => {
                     )
                 }}
             />
+            {/*<Tab.Screen*/}
+            {/*    name='Profile'*/}
+            {/*    component={Profile}*/}
+            {/*    options={{*/}
+            {/*        tabBarLabel:'',*/}
+            {/*        tabBarIcon:({color,size})=>(*/}
+            {/*            <Icon name='ios-person' color={color} size={30}/>*/}
+            {/*        )*/}
+            {/*    }}*/}
+            {/*/>*/}
             <Tab.Screen
-                name='Profile'
-                component={Profile}
+                name='Login'
+                component={Login}
                 options={{
                     tabBarLabel:'',
                     tabBarIcon:({color,size})=>(
@@ -67,6 +79,8 @@ const ChatStackNavigator = () => {
         <Stack.Navigator screenOptions={screenOptionStyle}>
             <Stack.Screen name='Chat' component={BottomTabNavigator}/>
             <Stack.Screen name='Discussion' component={Discussion}/>
+            <Stack.Screen name='Login' component={Login}/>
+            <Stack.Screen name='Register' component={Register}/>
         </Stack.Navigator>
     )
 }
