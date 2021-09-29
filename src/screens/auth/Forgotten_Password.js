@@ -1,24 +1,36 @@
 import React from "react";
-import { Text, Button, View, TextInput, ScrollView, ImageBackground, StyleSheet, Dimensions } from 'react-native';
+import {Text, 
+    Button, 
+    View, 
+    TextInput, 
+    ImageBackground,
+    StyleSheet, 
+    Dimensions,
+    TouchableWithoutFeedback,
+    Keyboard,
+    Alert} from 'react-native';
+
 import Icon from '@expo/vector-icons/AntDesign';
 
 export default class Register extends React.Component {
 
+    
     render() {
         const { navigate } = this.props.navigation
         return (
-            <View
-                style={{ flex: 1, backgroundColor: '#ffffff' }}
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={styles.container}
                 showsVerticalScrollIndicator={false}>
-                <ImageBackground
-                    source={require('./../../images/dating.jpg')}
-                    style={{
-                        height: Dimensions.get('window').height / 2.5,
+                <View style={styles.topView}>
+                    <ImageBackground
+                        source={require('./../../images/dating.jpg')}
+                        style={{height: Dimensions.get('window').height / 2.5,
                     }}>
-                    <View style={styles.brandView}>
+                        <View style={styles.brandView}>
                         <Text style={styles.brandViewText}>Dating Online</Text>
-                    </View>
-                </ImageBackground>
+                        </View>
+                    </ImageBackground>
+                </View>
                 <View style={styles.bottomView}>
                     <View style={{ padding: 40 }}>
                         <View style={{
@@ -69,23 +81,34 @@ export default class Register extends React.Component {
                   
                 </View>
             </View>
+            </TouchableWithoutFeedback>
         )
     }
 }
 const styles = StyleSheet.create({
     
+    container:{
+        flex: 1,
+        backgroundColor: '#ffffff',
+        alignItems: 'stretch',
+        justifyContent: 'center',
+        flexDirection: 'column',
+
+    },
+    topView:{
+        flex: 4,
+        flexDirection: 'column',
+
+    },
+    
     bottomView: {
-        flex: 1.5,
+        flex: 6,
+        flexDirection: 'column',
+        height: Dimensions.get('window').height,
         backgroundColor: '#FDF5E6',
         bottom: 50,
         borderTopStartRadius: 30,
         borderTopEndRadius: 30,
-    },
-    forgotPassView: {
-        height: 50,
-        marginTop: 20,
-        flexDirection: 'row',
-
     },
 
 

@@ -1,16 +1,166 @@
-import React from 'react';
-import {View,Text} from 'react-native';
+import React from "react";
+import {
+    View,
+    Image,
+    StyleSheet,
+    Dimensions,
+    Text,
+    ScrollView,
+
+} from 'react-native';
+import Icon from '@expo/vector-icons/AntDesign';
+import { ButtonGroup } from "react-native-elements/dist/buttons/ButtonGroup";
 
 
-const Profile = () => {
-    return(
-        <View style={{
-            flex:1,
-            alignItems:'center',
-            justifyContent:'center'
-        }}>
-            <Text>Profile Screen</Text>
-        </View>
-    )
+export default class Login extends React.Component {
+
+    render() {
+
+        const { navigate } = this.props.navigation
+        return (
+            <ScrollView style={{ flex: 1, backgroundColor: '#ffffff' }}
+                showsVerticalScrollIndicator={false}>
+                <Image
+                    source={require('./../images/avartar1.jpg')}
+                    style={styles.avartar}
+
+                />
+                <View style={styles.title}>
+                    <Text style={styles.title}>Admin</Text>
+                    <Text style={styles.caption}>Hoa roi cua phat :))</Text>
+                </View>
+                <View style={styles.userInfo}>
+                    <View style={styles.row}>
+                        <Icon name="enviromento" color="#777777" size={20} />
+                        <Text style={{ color: "#777777", marginLeft: 20 }}>Ha Noi, VietNam</Text>
+                    </View>
+                    <View style={styles.row}>
+                        <Icon name="phone" color="#777777" size={20} />
+                        <Text style={{ color: "#777777", marginLeft: 20 }}>+84 987654321</Text>
+                    </View>
+                    <View style={styles.row}>
+                        <Icon name="mail" color="#777777" size={20} />
+                        <Text style={{ color: "#777777", marginLeft: 20 }}>admin@gmail.com</Text>
+                    </View>
+                    <View style={styles.row}>
+                        <Icon name="calendar" color="#777777" size={20} />
+                        <Text style={{ color: "#777777", marginLeft: 20 }}>03-06-1996</Text>
+                    </View>
+                    
+                </View>
+
+                <View style={styles.infoBoxWrapper}>
+                    <View style={[styles.infoBox, {
+                        borderRightColor: '#dddddd',
+                        borderRightWidth: 1
+                    }]}>
+                       
+                    </View>
+                    <View style={styles.infoBox}>
+                       
+                    </View>
+                </View>
+
+                <View style={styles.menuWrapper}>
+                        <View style={styles.menuItem}>
+                            <Icon name="hearto" color="#FF6347" size={25} />
+                            <Text style={styles.menuItemText}>Your Favorites</Text>
+                        </View>
+                       
+                        <View style={styles.menuItem}>
+                            <Icon name="wechat" color="#FF6347" size={25} />
+                            <Text style={styles.menuItemText}>Tell Your Friends</Text>
+                        </View>
+
+                        <View style={styles.menuItem}>
+                            <Icon name="customerservice" color="#FF6347" size={25} />
+                            <Text style={styles.menuItemText}>Support</Text>
+                        </View>
+                        <View style={styles.menuItem}>
+                            <Icon name="setting" color="#FF6347" size={25} />
+                            <Text style={styles.menuItemText}>Settings</Text>
+                        </View>
+                        <View style={styles.menuItem}>
+                            <Icon name="logout" color="#FF6347" size={25} />
+                            <Text style={styles.menuItemText} onPress={() => navigate('Login')}>Logout</Text>
+                        </View>
+                </View>
+            </ScrollView>
+
+
+
+
+        )
+    }
 }
-export default Profile;
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#ffffff',
+        alignItems: 'stretch',
+        justifyContent: 'center',
+        flexDirection: 'column',
+
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginTop: 5,
+    },
+    avartar: {
+        marginTop: 30,
+        height: 200,
+        width: 200,
+        borderRadius: 100,
+        alignSelf: 'center'
+    },
+    userInfo: {
+        paddingHorizontal: 30,
+        marginBottom: 25,
+        marginTop: 10
+    },
+
+    caption: {
+        fontSize: 14,
+        lineHeight: 14,
+        fontWeight: '500',
+        alignSelf: 'center',
+        marginTop:5,
+    },
+    row: {
+        flexDirection: 'row',
+        marginBottom: 10,
+    },
+    infoBoxWrapper: {
+        borderBottomColor: '#dddddd',
+        borderBottomWidth: 1,
+        borderTopColor: '#dddddd',
+        borderTopWidth: 1,
+        flexDirection: 'row',
+        height: 100,
+    },
+    infoBox: {
+        
+        width: '50%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row',
+    },
+    menuWrapper: {
+        marginTop: 10,
+    },
+    menuItem: {
+        flexDirection: 'row',
+        paddingVertical: 15,
+        paddingHorizontal: 30,
+    },
+    menuItemText: {
+        color: '#777777',
+        marginLeft: 20,
+        fontWeight: '600',
+        fontSize: 16,
+        lineHeight: 26,
+    },
+
+});
