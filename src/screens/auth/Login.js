@@ -10,19 +10,27 @@ import {
     Dimensions,
     TouchableWithoutFeedback,
     Keyboard,
-    Alert
+    Alert,
+    AsyncStorage
+    
  } from 'react-native';
 import Icon from '@expo/vector-icons/AntDesign';
-import { ButtonGroup } from "react-native-elements/dist/buttons/ButtonGroup";
 
 
 export default class Login extends React.Component {
+    componentDidMount = () =>{
+        AsyncStorage.getItem('username').then((value) => this.setState({'username':value}));
+        AsyncStorage.getItem('password').then((value) => this.setState({'password':value}));
+    }
+
     constructor(props) {
         super(props);
         this.toggleSwitch = this.toggleSwitch.bind(this);
         this.state = {
             username: "",
             password: "",
+            inputUsername:"",
+            inputPassword:"",
             showPassword: true,
         }
       }
@@ -31,12 +39,14 @@ export default class Login extends React.Component {
       }
 
     checkLogin=() =>{
-        const {username, password} = this.state;
-        if(username == "" && password == ""){
+        const {inputUsername, inputPassword} = this.state;
+        const myUsername = this.state.username;
+        const myPassword = this.state.password;
+        if(inputUsername == "" && inputPassword == ""){
             Alert.alert('Please fill the Username and Password');
         }
-        else if(username == "admin" && password == "admin"){
-            Alert.alert('Welcome' +' '+ username)
+        else if(inputUsername == myUsername && inputPassword == myPassword){
+            Alert.alert('Welcome' +' '+ inputUsername)
             this.props.navigation.navigate("Profile")
         }
         else{
@@ -69,7 +79,7 @@ export default class Login extends React.Component {
                                 style={{ color: 'red', fontStyle: 'italic' }}>Create new account {' '}</Text>
                            
                         </Text>
-                        <Text>Forgot your password? {' '}
+                        <Text style={{marginTop:10}}>Forgot your password? {' '}
                         <Text onPress={() => navigate('Forgotten_Password')}
                                 style={{ color: 'red', fontStyle: 'italic' }}>Forgotten Password</Text>
                         </Text>
@@ -91,7 +101,7 @@ export default class Login extends React.Component {
                                     placeholder="UserName"
                                     placeholderTextColor="#00716F"
                                     style={{paddingHorizontal:10,width: Dimensions.get('window').width / 1}}
-                                    onChangeText={username => this.setState({username})}
+                                    onChangeText={inputUsername => this.setState({inputUsername})}
                                 
                                 />
                             </View>
@@ -110,11 +120,10 @@ export default class Login extends React.Component {
                                 <Icon name="eye" color="#00716F" size={24} onPress={this.toggleSwitch} value={!this.state.showPassword}/>
                                 <TextInput
                                 secureTextEntry={this.state.showPassword}
-                                onChangeText={(password) => this.setState({ password })}
                                 placeholder="Password"
                                 placeholderTextColor="#00716F"
                                 style={{paddingHorizontal:10,width: Dimensions.get('window').width / 1}}
-                                onChangeText={password => this.setState({password})}
+                                onChangeText={inputPassword => this.setState({inputPassword})}
                                 />
                             </View>
                             
@@ -127,14 +136,11 @@ export default class Login extends React.Component {
                             title="Login"
                             onPress={this.checkLogin}
                         />
-                    
                         </View>
-                        <View style={{ width:Dimensions.get('window').width / 2, alignSelf:'center', marginTop:15}}>
-                        
-                        <Button
-                        backgroundColor='#3b5998'
-                        title="Login with Facebook"
-                        />
+
+                        <View style={styles.loginFacebook}>
+                            <Icon name="facebook-square" color="#ffffff" size={30} />
+                            <Text style={styles.loginFacebooktext}>{' '}Login with Facebook</Text>
                         </View>
                         
                     </View>
@@ -173,6 +179,20 @@ const styles = StyleSheet.create({
     loginButtonTitle:{
         fontSize:18,
         color: 'white'
+    },
+    loginFacebook:{
+        width:Dimensions.get('window').width / 2,
+        alignSelf:'center',
+        marginTop:10,
+        flexDirection:'row',
+        backgroundColor:'#4267b2'
+    },
+    loginFacebooktext:{
+        backgroundColor:'#4267b2',
+        alignSelf:'center',
+        fontSize:16,
+        color:'#ffffff'
+
     },
    
 });

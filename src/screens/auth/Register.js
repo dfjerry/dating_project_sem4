@@ -8,15 +8,46 @@ import {
     StyleSheet, 
     Dimensions,
     TouchableWithoutFeedback,
-    Keyboard
+    Keyboard,
+    Alert,
+    AsyncStorage,
  } from 'react-native';
 import Icon from '@expo/vector-icons/AntDesign';
 
 export default class Register extends React.Component {
+    componentDidMount = () =>{
+        AsyncStorage.getItem('username').then((value) => this.setState({'username':value}));
+        AsyncStorage.getItem('password').then((value) => this.setState({'password':value}));
+        AsyncStorage.getItem('name').then((value) => this.setState({'name':value}));
+        AsyncStorage.getItem('email').then((value) => this.setState({'email':value}));
+    }
+    setUsername = (value) => {
+        AsyncStorage.setItem('username', value);
+        this.setState({'username':value});
+    }
+
+    setPassword = (value) => {
+        AsyncStorage.setItem('password', value);
+        this.setState({'password':value});
+    }
+    setName = (value) => {
+        AsyncStorage.setItem('name', value);
+        this.setState({'name':value});
+    }
+
+    setEmail = (value) => {
+        AsyncStorage.setItem('email', value);
+        this.setState({'email':value});
+    }
+
     constructor(props) {
         super(props);
         this.toggleSwitch = this.toggleSwitch.bind(this);
         this.state = {
+            username: "",
+            password: "",
+            name:"",
+            email:"",
             showPassword: true,
         }
     }
@@ -54,7 +85,7 @@ export default class Register extends React.Component {
                         <View style={{
                             flexDirection: "row",
                             alignItems: "center",
-                            marginHorizontal: 55,
+                            marginHorizontal: 10,
                             borderWidth: 2,
                             marginTop: 10,
                             paddingHorizontal: 10,
@@ -64,16 +95,18 @@ export default class Register extends React.Component {
                         }}>
                             <Icon name="user" color="#00716F" size={24} />
                             <TextInput
+                                value={this.state.username}
                                 placeholder="UserName"
                                 placeholderTextColor="#00716F"
                                 style={{ paddingHorizontal: 10, width: Dimensions.get('window').width / 1 }}
+                                onChangeText={this.setUsername}
                             />
                         </View>
 
                         <View style={{
                             flexDirection: "row",
                             alignItems: "center",
-                            marginHorizontal: 55,
+                            marginHorizontal: 10,
                             borderWidth: 2,
                             marginTop: 10,
                             paddingHorizontal: 10,
@@ -83,18 +116,20 @@ export default class Register extends React.Component {
                         }}>
                             <Icon name="eye" color="#00716F" size={24} onPress={this.toggleSwitch} value={!this.state.showPassword}/>
                             <TextInput
+                                value={this.state.password}
                                 secureTextEntry={this.state.showPassword}
                                 onChangeText={(password) => this.setState({ password })}
                                 placeholder="Password"
                                 placeholderTextColor="#00716F"
                                 style={{ paddingHorizontal: 10, width: Dimensions.get('window').width / 1 }}
+                                onChangeText={this.setPassword}
                             />
                         </View>
 
                         <View style={{
                             flexDirection: "row",
                             alignItems: "center",
-                            marginHorizontal: 55,
+                            marginHorizontal: 10,
                             borderWidth: 2,
                             marginTop: 10,
                             paddingHorizontal: 10,
@@ -102,20 +137,21 @@ export default class Register extends React.Component {
                             borderRadius: 23,
                             paddingVertical: 2
                         }}>
-                            <Icon name="eye" color="#00716F" size={24} onPress={this.toggleSwitch} value={!this.state.showPassword}/>
+                            <Icon name="aliwangwang-o1" color="#00716F" size={24} onPress={this.toggleSwitch} value={!this.state.showPassword}/>
                             <TextInput
-                                secureTextEntry={this.state.showPassword}
-                                onChangeText={(password) => this.setState({ password })}
-                                placeholder="Confirm Password"
+                                value={this.state.name}
+                                onChangeText={(name) => this.setState({ name })}
+                                placeholder="Name"
                                 placeholderTextColor="#00716F"
                                 style={{ paddingHorizontal: 10, width: Dimensions.get('window').width / 1 }}
+                                onChangeText={this.setName}
                             />
                         </View>
 
                         <View style={{
                             flexDirection: "row",
                             alignItems: "center",
-                            marginHorizontal: 55,
+                            marginHorizontal: 10,
                             borderWidth: 2,
                             marginTop: 10,
                             paddingHorizontal: 10,
@@ -125,10 +161,12 @@ export default class Register extends React.Component {
                         }}>
                             <Icon name="mail" color="#00716F" size={24} />
                             <TextInput
+                                value={this.state.email}
                                 keybroadType="email-address"
                                 placeholder="Email"
                                 placeholderTextColor="#00716F"
                                 style={{ paddingHorizontal: 10, width: Dimensions.get('window').width / 1 }}
+                                onChangeText={this.setEmail}
                             />
                         </View>
 

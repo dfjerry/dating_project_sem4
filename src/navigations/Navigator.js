@@ -29,6 +29,16 @@ const BottomTabNavigator = () => {
             }}
         >
             <Tab.Screen
+                name='Splash'
+                component={Splash}
+                options={{
+                    tabBarLabel:'',
+                    tabBarIcon:({color,size})=>(
+                        <Icon2 name='eye' color={color} size={30}/>
+                    )
+                }}
+            />
+            <Tab.Screen
                 name='Login'
                 component={Login}
                 options={{
@@ -59,16 +69,7 @@ const BottomTabNavigator = () => {
                     )
                 }}
             />
-            <Tab.Screen
-                name='Splash'
-                component={Splash}
-                options={{
-                    tabBarLabel:'',
-                    tabBarIcon:({color,size})=>(
-                        <Icon2 name='eye' color={color} size={30}/>
-                    )
-                }}
-            />
+            
             {/*<Tab.Screen*/}
             {/*    name='Profile'*/}
             {/*    component={Profile}*/}
@@ -91,7 +92,8 @@ const screenOptionStyle = {
 const ChatStackNavigator = () => {
     return(
         <Stack.Navigator screenOptions={screenOptionStyle}>
-            <Stack.Screen name='Chat' component={BottomTabNavigator}/>
+            <Stack.Screen name='Home' component={BottomTabNavigator}/>
+            <Stack.Screen name='Chat' component={Chat}/>
             <Stack.Screen name='Discussion' component={Discussion}/>
             <Stack.Screen name='Login' component={Login}/>
             <Stack.Screen name='Splash' component={Splash}/>

@@ -45,7 +45,7 @@ export default class Register extends React.Component {
                         <View style={{
                             flexDirection: "row",
                             alignItems: "center",
-                            marginHorizontal: 55,
+                            marginHorizontal: 10,
                             borderWidth: 2,
                             marginTop: 10,
                             paddingHorizontal: 10,

@@ -6,13 +6,26 @@ import {
     Dimensions,
     Text,
     ScrollView,
-
+    AsyncStorage,
 } from 'react-native';
 import Icon from '@expo/vector-icons/AntDesign';
-import { ButtonGroup } from "react-native-elements/dist/buttons/ButtonGroup";
-
 
 export default class Login extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            username: "",
+            password: "",
+            name:"",
+            email:"",
+        }
+    }
+    componentDidMount = () =>{
+        AsyncStorage.getItem('username').then((value) => this.setState({'username':value}));
+        AsyncStorage.getItem('password').then((value) => this.setState({'password':value}));
+        AsyncStorage.getItem('name').then((value) => this.setState({'name':value}));
+        AsyncStorage.getItem('email').then((value) => this.setState({'email':value}));
+    }
 
     render() {
 
@@ -26,8 +39,8 @@ export default class Login extends React.Component {
 
                 />
                 <View style={styles.title}>
-                    <Text style={styles.title}>Admin</Text>
-                    <Text style={styles.caption}>Hoa roi cua phat :))</Text>
+                    <Text style={styles.title}>{this.state.name}</Text>
+                    <Text style={styles.caption}>@{this.state.username}</Text>
                 </View>
                 <View style={styles.userInfo}>
                     <View style={styles.row}>
@@ -40,7 +53,7 @@ export default class Login extends React.Component {
                     </View>
                     <View style={styles.row}>
                         <Icon name="mail" color="#777777" size={20} />
-                        <Text style={{ color: "#777777", marginLeft: 20 }}>admin@gmail.com</Text>
+                        <Text style={{ color: "#777777", marginLeft: 20 }}>{this.state.email}</Text>
                     </View>
                     <View style={styles.row}>
                         <Icon name="calendar" color="#777777" size={20} />
@@ -63,13 +76,13 @@ export default class Login extends React.Component {
 
                 <View style={styles.menuWrapper}>
                         <View style={styles.menuItem}>
-                            <Icon name="hearto" color="#FF6347" size={25} />
-                            <Text style={styles.menuItemText}>Your Favorites</Text>
+                            <Icon name="edit" color="#FF6347" size={25} />
+                            <Text style={styles.menuItemText} >Edit profile</Text>
                         </View>
                        
                         <View style={styles.menuItem}>
                             <Icon name="wechat" color="#FF6347" size={25} />
-                            <Text style={styles.menuItemText}>Tell Your Friends</Text>
+                            <Text style={styles.menuItemText} onPress={() => navigate('Chat')}>Chat</Text>
                         </View>
 
                         <View style={styles.menuItem}>
@@ -79,6 +92,10 @@ export default class Login extends React.Component {
                         <View style={styles.menuItem}>
                             <Icon name="setting" color="#FF6347" size={25} />
                             <Text style={styles.menuItemText}>Settings</Text>
+                        </View>
+                        <View style={styles.menuItem}>
+                            <Icon name="infocirlceo" color="#FF6347" size={25} />
+                            <Text style={styles.menuItemText}>About</Text>
                         </View>
                         <View style={styles.menuItem}>
                             <Icon name="logout" color="#FF6347" size={25} />
@@ -152,12 +169,16 @@ const styles = StyleSheet.create({
     },
     menuItem: {
         flexDirection: 'row',
-        paddingVertical: 15,
+        paddingVertical: 5,
         paddingHorizontal: 30,
+        borderBottomColor: '#dddddd',
+        borderBottomWidth: 1,
+        borderTopColor: '#dddddd',
+        borderTopWidth: 1,
     },
     menuItemText: {
         color: '#777777',
-        marginLeft: 20,
+        marginLeft: 10,
         fontWeight: '600',
         fontSize: 16,
         lineHeight: 26,
