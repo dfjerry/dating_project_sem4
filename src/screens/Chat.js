@@ -46,8 +46,6 @@ const Chat = (props) => {
 
     }, [])
 
-    console.log(data[0].login)
-
     return(
         <LinearGradient
             colors={['#f26a50', '#f20042', '#f20045']}
