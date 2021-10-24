@@ -102,26 +102,26 @@ export default function Register({navigation}) {
                             onChangeText={setEmail}
                         />
                     </View>
-                    {/*<View style={{*/}
-                    {/*    flexDirection: "row",*/}
-                    {/*    alignItems: "center",*/}
-                    {/*    marginHorizontal: 10,*/}
-                    {/*    borderWidth: 2,*/}
-                    {/*    marginTop: 10,*/}
-                    {/*    paddingHorizontal: 10,*/}
-                    {/*    borderColor: "#00716F",*/}
-                    {/*    borderRadius: 23,*/}
-                    {/*    paddingVertical: 2*/}
-                    {/*}}>*/}
-                    {/*    <AntDesign name="user" size={24} color="black"/>*/}
-                    {/*    <TextInput*/}
-                    {/*        value={userName}*/}
-                    {/*        onChangeText={setUserName}*/}
-                    {/*        placeholder="User name"*/}
-                    {/*        placeholderTextColor="#00716F"*/}
-                    {/*        style={{paddingHorizontal: 10, width: Dimensions.get('window').width / 1}}*/}
-                    {/*    />*/}
-                    {/*</View>*/}
+                    <View style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        marginHorizontal: 10,
+                        borderWidth: 2,
+                        marginTop: 10,
+                        paddingHorizontal: 10,
+                        borderColor: "#00716F",
+                        borderRadius: 23,
+                        paddingVertical: 2
+                    }}>
+                        <AntDesign name="user" size={24} color="black"/>
+                        <TextInput
+                            value={userName}
+                            onChangeText={setUserName}
+                            placeholder="User name"
+                            placeholderTextColor="#00716F"
+                            style={{paddingHorizontal: 10, width: Dimensions.get('window').width / 1}}
+                        />
+                    </View>
                     <View style={{
                         flexDirection: "row",
                         alignItems: "center",
