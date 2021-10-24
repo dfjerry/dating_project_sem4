@@ -16,31 +16,41 @@ const Discussion = ({ route, navigation }) => {
     const [inputMessage, setMessage] = useState('');
     const [mess, setMess] = useState('');
     const [room, setRoom] = useState(null);
-    const send = () => {
-        inputMessage.push({
-            user_id: currentUser,
-            message_text:mess
-        });
-        setMessage(inputMessage)
-        setMess('');
+    const send = async () => {
+        await axios.post(`${BASE_URL}/api/users/chat/`, {
+            "user_id": currentUser,
+            "participant_id": room,
+            "message_text": mess
+        }).then(async (res) => {
+            const date = res.data;
+            date.time_send = new Date();
+            inputMessage.push(res.data);
+            setMessage(inputMessage)
+            setMess('');
+        }).catch(err => console.log("diss", err))
+
     };
+    async function fetchData() {
+        await axios.get(`${BASE_URL}/api/users/chat/${itemId}/${currentUser}`).then(async (res) => {
+            if (res.status == 200){
+                // console.log(11111,res.data)
+                setRoom(res.data);
+                await axios.get(`${BASE_URL}/api/users/chat/participant/${res.data}`).then(res2 => {
+                    setMessage(res2.data)
+                    // console.log(res2.data)
+                }).catch(err => console.log("mess", err))
+            }
+        }).catch((err) => {
+            console.log("err diss", err)
+        })
+    }
+    const appRefreshRate = 2000;
     useEffect(() => {
-        async function fetchData() {
-            await axios.get(`${BASE_URL}/api/users/chat/${itemId}/${currentUser}`).then(async (res) => {
-                if (res.status == 200){
-                    console.log(11111,res.data)
-                    setRoom(res.data);
-                    await axios.get(`${BASE_URL}/api/users/chat/participant/${res.data}`).then(res2 => {
-                        setMessage(res2.data)
-                        console.log(res2.data)
-                    }).catch(err => console.log("mess", err))
-                }
-            }).catch((err) => {
-                console.log("err home", err)
-            })
-        }
-        fetchData().then(r => r);
-    }, [itemId])
+        let interval;
+        interval = setInterval(fetchData, appRefreshRate)
+        return () => clearInterval(interval)
+    }, [appRefreshRate])
+    console.log(mess)
     return(
         <LinearGradient
             colors={["#f26a50","#f26a50", "#f20045"]}
@@ -109,7 +119,7 @@ const styles = StyleSheet.create({
         paddingHorizontal:20,
         borderBottomLeftRadius:35,
         borderBottomRightRadius:35,
-        paddingTop:40
+        paddingTop:40,
     },
     headerContainer:{
         flexDirection:'row',

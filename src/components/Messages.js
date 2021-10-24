@@ -18,6 +18,7 @@ const Messages = ({ first, last, uri, onPress, currentUser, id }) => {
     // const [count, setCount] = useState(0);
     const [mess, setMess] = useState('');
     const [room, setRoom] = useState(null);
+
     useEffect(() => {
         async function fetchData() {
             await axios.get(`${BASE_URL}/api/users/chat/${currentUser}/${id}`).then(async (res) => {
@@ -29,7 +30,7 @@ const Messages = ({ first, last, uri, onPress, currentUser, id }) => {
                     }).catch(err => console.log("mess", err))
                 }
             }).catch((err) => {
-                console.log("err home", err)
+                console.log("err mess", err)
             })
         }
         fetchData().then(r => r);

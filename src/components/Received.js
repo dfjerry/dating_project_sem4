@@ -7,7 +7,7 @@ const Received = ({image, message, time, id, last}) => {
     return(
         <View style={styles.container}>
           <Image source={{uri:image}} style={styles.img}/>
-          <View>
+          <View style={{marginTop: 10}}>
                <Text style={styles.message}>{message}</Text>
               {
                   id === (last - 1) ? <Text style={styles.duration}>{formatAMPM(time)}</Text> : null
@@ -22,12 +22,12 @@ const styles = StyleSheet.create({
         color:'#b6b6b6',
         fontSize:11,
         marginHorizontal:15,
-        marginTop:5,
+        marginTop:10,
         fontFamily:'Montserrat_600SemiBold',
     },
     container:{
         flexDirection:'row',
-        marginTop:20,
+        marginTop:5,
         width:250
     },
     img:{

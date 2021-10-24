@@ -15,17 +15,18 @@ import {BASE_URL} from "../config";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {useAuth} from "../hooks/useAuth";
+import {Loading} from "../components/Loading";
 
 const HomeScreen = ({isUserLoading, user}) => {
     const {auth, state} = useAuth();
-    const [loading, setLoading] = React.useState(false);
+    const [loading, setLoading] = React.useState(true);
     const [users, setUsers] = useState([]);
     const [matchesIds, setMatchesIds] = useState(null); // all user ids of people who we already matched
     const [currentUser, setCurrentUser] = useState(null);
     const [me, setMe] = useState(null);
 
     const onSwipeLeft = async (e) => {
-        await axios.get(`${BASE_URL}/api/users/like/${state?.user?.user_id}/${e.user_id}`).then((res) => {
+        await axios.get(`${BASE_URL}/api/users/unlike/${state?.user?.user_id}/${e.user_id}`).then((res) => {
             console.log('success')
         }).catch((err) => {
             console.log("err", err)
@@ -34,7 +35,7 @@ const HomeScreen = ({isUserLoading, user}) => {
     };
 
     const onSwipeRight = async (e) => {
-        await axios.get(`${BASE_URL}/api/users/unlike/${state?.user?.user_id}/${e.user_id}`).then((res) => {
+        await axios.get(`${BASE_URL}/api/users/like/${state?.user?.user_id}/${e.user_id}`).then((res) => {
             console.log('success')
         }).catch((err) => {
             console.log("err", err)
@@ -54,6 +55,7 @@ const HomeScreen = ({isUserLoading, user}) => {
         })
     }
     useEffect(() => {
+        setLoading(true);
         async function fetchData() {
             await axios.get(`${BASE_URL}/api/users/explore/${state?.user?.user_id}`).then((res) => {
                 if (res.status == 200){
@@ -64,6 +66,7 @@ const HomeScreen = ({isUserLoading, user}) => {
             })
         }
         fetchData().then(r => r);
+        setLoading(false)
     }, [state]);
     return (
         <View style={styles.pageContainer}>
@@ -83,6 +86,7 @@ const HomeScreen = ({isUserLoading, user}) => {
                     <FontAwesome onPress={(e) => handlePress(e, 'like')} name="heart" size={30} color="#4FCC94" />
                 </View>
             </View>
+            <Loading loading={loading}/>
         </View>
     );
 };

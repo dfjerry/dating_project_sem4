@@ -8,21 +8,32 @@ import {
     ScrollView,
     AsyncStorage,
 } from 'react-native';
-import PROFILE from '../../assets/guest-user.jpg';
+import PROFILE from '../../assets/profile-pic.jpg';
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {AuthContext} from "../context/AuthContext";
 import {AntDesign} from "@expo/vector-icons";
 import {useAuth} from "../hooks/useAuth";
 import Icon from "@expo/vector-icons/AntDesign";
 import {TouchableOpacity} from "react-native-gesture-handler";
+import axios from "axios";
+import {BASE_URL} from "../config";
 
 export default function Profile({navigation}){
     const {logout} = React.useContext(AuthContext);
     const {auth, state} = useAuth();
     const [user, setUser] = useState(state?.user);
     useEffect(() => {
-        setUser(state.user)
-    }, [state.user]);
+        async function fetchData() {
+            await axios.get(`${BASE_URL}/api/users/details/${state?.user?.user_id}`).then((res) => {
+                if (res.status == 200){
+                    setUser(res.data)
+                }
+            }).catch((err) => {
+                console.log("err profile", err)
+            })
+        }
+        fetchData().then(r => r);
+    }, [state?.user]);
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.titleBar}>
@@ -31,14 +42,12 @@ export default function Profile({navigation}){
                 >
                     <Ionicons name="ios-arrow-back" size={24} color="#52575D"/>
                 </TouchableOpacity>
-
-                {/*<Ionicons name="md-more" size={24} color="#52575D"/>*/}
                 <Text onPress={logout} >Logout</Text>
             </View>
 
             <View style={{ alignSelf: "center" }}>
                 <View style={styles.profileImage}>
-                    <Image source={PROFILE} style={styles.image} resizeMode="center"/>
+                    <Image source={{uri: user?.photos?.length > 0 ? user.photos[0].link : "https://assets.i-hr.vn/static/d/user/images/20211020/210-b88339c0-3182-11ec-b893-3fd1a6c0f5ff.jpg"}} style={styles.imageProfile} resizeMode="center"/>
                 </View>
                 <View style={styles.dm}>
                     <AntDesign  onPress={() => {
@@ -78,7 +87,10 @@ export default function Profile({navigation}){
                         user?.photos?.map((e, index) => {
                             return (
                                 <View style={styles.mediaImageContainer}>
-                                    <Image source={(e.link !== null || e.link) ? e.link : "https://assets.i-hr.vn/static/d/user/images/20211020/210-b88339c0-3182-11ec-b893-3fd1a6c0f5ff.jpg"} style={styles.image} resizeMode="cover"/>
+                                    <Image
+                                        source={{uri: e.link ? e.link : "https://assets.i-hr.vn/static/d/user/images/20211020/210-b88339c0-3182-11ec-b893-3fd1a6c0f5ff.jpg"}}
+                                        style={styles.image}
+                                        resizeMode="cover"/>
                                 </View>
                             )
                         })
@@ -112,11 +124,17 @@ const styles = StyleSheet.create({
         fontFamily: "HelveticaNeue",
         color: "#52575D"
     },
-    image: {
+    imageProfile: {
         flex: 1,
         height: 200,
         width: 200,
         borderRadius: 100,
+        overflow: "hidden"
+    },
+    image: {
+        flex: 1,
+        height: 200,
+        width: 200,
         overflow: "hidden"
     },
     titleBar: {

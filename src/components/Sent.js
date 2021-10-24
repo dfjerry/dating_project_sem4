@@ -22,7 +22,7 @@ export default Sent;
 
 const styles = StyleSheet.create({
     container:{
-        marginVertical:25,
+        marginVertical:4,
         alignSelf:'flex-end'
     },
     duration:{

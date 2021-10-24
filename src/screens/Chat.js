@@ -51,7 +51,7 @@ const Chat = (props) => {
             useNativeDriver:false
         }).start();
         setUser(state?.user)
-    }, [state])
+    }, [state?.user])
     return(
         <LinearGradient
             colors={['#f26a50', '#f20042', '#f20045']}

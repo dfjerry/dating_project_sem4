@@ -21,8 +21,8 @@ import {Entypo} from "@expo/vector-icons";
 export default function Login({navigation}) {
 
     const {login} = React.useContext(AuthContext);
-    const [email, setEmail] = React.useState('tuan2');
-    const [password, setPassword] = React.useState('tuan2');
+    const [email, setEmail] = React.useState('tuantuna');
+    const [password, setPassword] = React.useState('tuantuan1');
     const [loading, setLoading] = React.useState(false);
     const [error, setError] = React.useState('');
     return (
