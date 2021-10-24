@@ -37,7 +37,7 @@ export default class Splash extends React.Component {
         const { navigate } = this.props.navigation
 
         return (
-            <TouchableWithoutFeedback onPress={() => navigate('Login')}>
+            <TouchableWithoutFeedback onPress={() => navigate('LoginScreen')}>
                 <View style={styles.container}>
 
                     <Animated.Image source={require('./../../images/dating.jpg')}

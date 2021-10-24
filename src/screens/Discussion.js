@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View,Text,Image,StyleSheet} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
@@ -8,22 +8,39 @@ import Received from '../components/Received';
 import Sent from '../components/Sent';
 import Data from '../dummy/Data.json';
 import Input from '../components/Input';
+import axios from "axios";
+import {BASE_URL} from "../config";
 
 const Discussion = ({ route, navigation }) => {
-    const { itemName , itemPic } = route.params;
+    const { itemName , itemPic, itemId, currentUser } = route.params;
     const [inputMessage, setMessage] = useState('');
-
+    const [mess, setMess] = useState('');
+    const [room, setRoom] = useState(null);
     const send = () => {
-        Data.push({id:inputMessage,message:inputMessage});
-        setMessage('');
+        inputMessage.push({
+            user_id: currentUser,
+            message_text:mess
+        });
+        setMessage(inputMessage)
+        setMess('');
     };
-
-    let txt = []
-    for (let i = 5; i < Data.length; i++){
-        txt.push(<Sent key={Data[i].id} message={Data[i].message}/>);
-    }
-    console.log(Data)
-
+    useEffect(() => {
+        async function fetchData() {
+            await axios.get(`${BASE_URL}/api/users/chat/${itemId}/${currentUser}`).then(async (res) => {
+                if (res.status == 200){
+                    console.log(11111,res.data)
+                    setRoom(res.data);
+                    await axios.get(`${BASE_URL}/api/users/chat/participant/${res.data}`).then(res2 => {
+                        setMessage(res2.data)
+                        console.log(res2.data)
+                    }).catch(err => console.log("mess", err))
+                }
+            }).catch((err) => {
+                console.log("err home", err)
+            })
+        }
+        fetchData().then(r => r);
+    }, [itemId])
     return(
         <LinearGradient
             colors={["#f26a50","#f26a50", "#f20045"]}
@@ -40,34 +57,37 @@ const Discussion = ({ route, navigation }) => {
                     <Image source={{uri:itemPic}} style={styles.avatar}/>
                 </View>
                 <ScrollView showsVerticalScrollIndicator={false}>
-                    <LastWatch  checkedOn='Yesterday'/>
-                    <Received
-                        image={itemPic}
-                        message={Data[0].message}
-                    />
-                    <Sent
-                        message={Data[1].message}
-                    />
-                    <Received
-                        image={itemPic}
-                        message={Data[2].message}
-                    />
-                    <Sent
-                        message={Data[3].message}
-                    />
                     <LastWatch  checkedOn='Today'/>
-                    <Received
-                        image={itemPic}
-                        message={Data[4].message}
-                    />
-                    <View>
-                        {txt}
-                    </View>
+                    {
+                        inputMessage ? inputMessage.map((e, index) => {
+                            if (e.user_id != currentUser) {
+                                return (<Received
+                                    key={index}
+                                    id={index}
+                                    last={inputMessage.length}
+                                    image={itemPic}
+                                    message={e.message_text}
+                                    time={e.time_send}
+                                />)
+                            }else{
+                                return (<Sent
+                                    key={index}
+                                    id={index}
+                                    last={inputMessage.length}
+                                    message={e.message_text}
+                                    time={e.time_send}
+                                />)
+                            }
+                        }) : null
+                    }
+                    {/*<View>*/}
+                    {/*    {txt}*/}
+                    {/*</View>*/}
                 </ScrollView>
             </View>
             <Input
-                inputMessage={inputMessage}
-                setMessage={(inputMessage)=> setMessage(inputMessage)}
+                inputMessage={mess}
+                setMessage={(mess)=> setMess(mess)}
                 onSendPress={send}
             />
         </LinearGradient>

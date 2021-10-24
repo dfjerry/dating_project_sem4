@@ -1,13 +1,16 @@
 import React from 'react';
-import {View,Text,StyleSheet,Image} from 'react-native';
+import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 
 
-const Profile = ({username,uri}) => {
+const Profile = ({first, last ,uri, onPress}) => {
     return(
-        <View style={styles.container}>
-            <Image source={{uri:uri}} style={styles.avatarStyle}/>
-            <Text style={styles.nameStyle}>{username}</Text>
-        </View>
+        <TouchableOpacity
+            onPress={onPress}
+            style={styles.container}
+        >
+            <Image source={{uri: uri ? uri : "https://e7.pngegg.com/pngimages/753/432/png-clipart-user-profile-2018-in-sight-user-conference-expo-business-default-business-angle-service.png"}} style={styles.avatarStyle}/>
+            <Text style={styles.nameStyle}>{first} {last}</Text>
+        </TouchableOpacity>
     )
 }
 export default Profile;

@@ -1,6 +1,9 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {View,Text,TouchableOpacity,StyleSheet,Image} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import axios from "axios";
+import {BASE_URL} from "../config";
+import {formatAMPM} from "../utils/common";
 
 const randomTime = () => {
     const hrs = Math.round(Math.random()*12);
@@ -11,31 +14,54 @@ const randomTime = () => {
     return String(hFormat + hrs + ":"+ mFormat + mins + " " + amPm)
 }
 
-const Messages = ({ username, uri, count, onPress }) => {
+const Messages = ({ first, last, uri, onPress, currentUser, id }) => {
+    // const [count, setCount] = useState(0);
+    const [mess, setMess] = useState('');
+    const [room, setRoom] = useState(null);
+    useEffect(() => {
+        async function fetchData() {
+            await axios.get(`${BASE_URL}/api/users/chat/${currentUser}/${id}`).then(async (res) => {
+                if (res.status == 200){
+                    setRoom(res.data);
+                    await axios.get(`${BASE_URL}/api/users/chat/participant/${res.data}`).then(res2 => {
+                        // setCount(res2.data.length);
+                        setMess(res2.data.pop())
+                    }).catch(err => console.log("mess", err))
+                }
+            }).catch((err) => {
+                console.log("err home", err)
+            })
+        }
+        fetchData().then(r => r);
+    }, [id])
     return(
        <TouchableOpacity 
         onPress={onPress}
         style={styles.container}
        >
-           {
-               count > 0 ? (
-                   <LinearGradient
-                    colors={['#f26a50', '#f20045', '#f20045']}
-                    style={styles.gradientStyle}
-                   >
-                       <Text style={styles.count}>{count}</Text>
-                   </LinearGradient>
-               ):
+           {/*{*/}
+           {/*    count > 0 ? (*/}
+           {/*        <LinearGradient*/}
+           {/*         colors={['#f26a50', '#f20045', '#f20045']}*/}
+           {/*         style={styles.gradientStyle}*/}
+           {/*        >*/}
+           {/*            <Text style={styles.count}>{count}</Text>*/}
+           {/*        </LinearGradient>*/}
+           {/*    ):*/}
+           {/*        <LinearGradient*/}
+           {/*            colors={['#f26a50', '#f20045', '#f20045']}*/}
+           {/*            style={styles.gradientStyle}*/}
+           {/*        >*/}
+           {/*            <Text style={styles.count}>0</Text>*/}
+           {/*        </LinearGradient>*/}
+           {/*}*/}
                
-                null
-           }
-               
-               <Image source={{uri: uri}} style={styles.image}/>
+               <Image source={{uri: uri ? uri : "https://e7.pngegg.com/pngimages/753/432/png-clipart-user-profile-2018-in-sight-user-conference-expo-business-default-business-angle-service.png"}} style={styles.image}/>
                <View style={{marginLeft:10}}>
-                 <Text style={styles.username}>{username}</Text>
-                 <Text style={styles.text}>Hello, How are you</Text>
+                 <Text style={styles.username}>{first} {last}</Text>
+                 <Text style={styles.text}>{mess?.message_text}</Text>
                </View>
-               <Text style={styles.duration}>{randomTime()}</Text>
+               <Text style={styles.duration}>{formatAMPM(mess?.time_send)}</Text>
        </TouchableOpacity>
     )
 }
@@ -54,11 +80,13 @@ const styles = StyleSheet.create({
        borderRadius:10,
        alignItems:'center',
        justifyContent:'center',
-       marginRight:20 
+       marginRight:20,
+
     },
     count:{
         color:'#fff',
         fontFamily:'Montserrat_700Bold',
+        position: 'absolute'
     },
     image:{
         width:60,

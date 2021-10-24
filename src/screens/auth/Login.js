@@ -1,89 +1,47 @@
 import React from "react";
 import {
     Switch,
-    Text, 
-    Button, 
-    View, 
-    TextInput, 
-    ImageBackground, 
-    StyleSheet, 
+    Text,
+    Button,
+    View,
+    TextInput,
+    ImageBackground,
+    StyleSheet,
     Dimensions,
     TouchableWithoutFeedback,
     Keyboard,
     Alert,
-    AsyncStorage
-    
  } from 'react-native';
 import Icon from '@expo/vector-icons/AntDesign';
+import {AuthContext} from '../../context/AuthContext';
+import {Error} from '../../components/Error';
+import {Loading} from '../../components/Loading';
+import {Entypo} from "@expo/vector-icons";
 
+export default function Login({navigation}) {
 
-export default class Login extends React.Component {
-    componentDidMount = () =>{
-        AsyncStorage.getItem('username').then((value) => this.setState({'username':value}));
-        AsyncStorage.getItem('password').then((value) => this.setState({'password':value}));
-    }
+    const {login} = React.useContext(AuthContext);
+    const [email, setEmail] = React.useState('tuan2');
+    const [password, setPassword] = React.useState('tuan2');
+    const [loading, setLoading] = React.useState(false);
+    const [error, setError] = React.useState('');
+    return (
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 
-    constructor(props) {
-        super(props);
-        this.toggleSwitch = this.toggleSwitch.bind(this);
-        this.state = {
-            username: "",
-            password: "",
-            inputUsername:"",
-            inputPassword:"",
-            showPassword: true,
-        }
-      }
-      toggleSwitch() {
-        this.setState({ showPassword: !this.state.showPassword });
-      }
-
-    checkLogin=() =>{
-        const {inputUsername, inputPassword} = this.state;
-        const myUsername = this.state.username;
-        const myPassword = this.state.password;
-        if(inputUsername == "" && inputPassword == ""){
-            Alert.alert('Please fill the Username and Password');
-        }
-        else if(inputUsername == myUsername && inputPassword == myPassword){
-            Alert.alert('Welcome' +' '+ inputUsername)
-            this.props.navigation.navigate("Profile")
-        }
-        else{
-            Alert.alert('Data not found');
-        }
-    }
-
-    render() {
-
-        const { navigate } = this.props.navigation
-        return (
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            
             <View style={styles.container}
-                showsVerticalScrollIndicator={false}>
+                  showsVerticalScrollIndicator={false}>
                 <View style={styles.topView}>
                     <ImageBackground
-                    source={require('./../../images/dating.jpg')}
-                    style={{
-                        height: Dimensions.get('window').height / 2.5,
-                    }}>
-                </ImageBackground>
+                        source={require('./../../images/image.jpg')}
+                        style={{
+                            height: Dimensions.get('window').height / 2.5,
+                        }}>
+                    </ImageBackground>
                 </View>
-                
+                <Error error={error} />
                 <View style={styles.bottomView}>
                     <View style={{ padding: 40 }}>
                         <Text style={{ color: '#4632A1',fontSize:20 }}>Welcome !</Text>
-                        <Text style={{marginTop:10}}>Don't have an account? {' '}
-                            <Text onPress={() => navigate('Register')}
-                                style={{ color: 'red', fontStyle: 'italic' }}>Create new account {' '}</Text>
-                           
-                        </Text>
-                        <Text style={{marginTop:10}}>Forgot your password? {' '}
-                        <Text onPress={() => navigate('Forgotten_Password')}
-                                style={{ color: 'red', fontStyle: 'italic' }}>Forgotten Password</Text>
-                        </Text>
-                        
                         <View style={{ marginTop: 20 }}>
 
                             <View style={{
@@ -101,8 +59,8 @@ export default class Login extends React.Component {
                                     placeholder="UserName"
                                     placeholderTextColor="#00716F"
                                     style={{paddingHorizontal:10,width: Dimensions.get('window').width / 1}}
-                                    onChangeText={inputUsername => this.setState({inputUsername})}
-                                
+                                    value={email}
+                                    onChangeText={setEmail}
                                 />
                             </View>
 
@@ -117,40 +75,58 @@ export default class Login extends React.Component {
                                 borderRadius: 23,
                                 paddingVertical: 2
                             }}>
-                                <Icon name="eye" color="#00716F" size={24} onPress={this.toggleSwitch} value={!this.state.showPassword}/>
+                                <Entypo name="lock" size={24} color="black" />
                                 <TextInput
-                                secureTextEntry={this.state.showPassword}
-                                placeholder="Password"
-                                placeholderTextColor="#00716F"
-                                style={{paddingHorizontal:10,width: Dimensions.get('window').width / 1}}
-                                onChangeText={inputPassword => this.setState({inputPassword})}
+                                    secureTextEntry
+                                    placeholder="Password"
+                                    placeholderTextColor="#00716F"
+                                    style={{paddingHorizontal:10,width: Dimensions.get('window').width / 1}}
+                                    value={password}
+                                    onChangeText={setPassword}
                                 />
                             </View>
-                            
-                        </View>
-                        
-                        
-                        <View style={{ width:Dimensions.get('window').width / 2, alignSelf:'center', marginTop:30}}>
-                        <Button
-                            color='#00716F'
-                            title="Login"
-                            onPress={this.checkLogin}
-                        />
-                        </View>
 
-                        <View style={styles.loginFacebook}>
-                            <Icon name="facebook-square" color="#ffffff" size={30} />
-                            <Text style={styles.loginFacebooktext}>{' '}Login with Facebook</Text>
                         </View>
-                        
+                        <View style={{
+                            marginHorizontal:55,
+                            alignItems:"center",
+                            justifyContent:"center",
+                            marginTop:30,
+                            backgroundColor:"#00716F",
+                            paddingVertical:10,
+                            borderRadius:23
+                        }}>
+                            <Text style={{
+                                color:"white",
+                            }}
+                                  onPress={async () => {
+                                      try {
+                                          setLoading(true);
+                                          await login(email, password);
+                                          setLoading(false);
+                                      } catch (e) {
+                                          setError(e.message);
+                                          setLoading(false);
+                                      }
+                                  }}
+                            >Login</Text>
+                        </View>
+                        <Text
+                            onPress={() => {
+                                navigation.navigate('Register');
+                            }}
+                            style={{
+                                alignSelf:"center",
+                                color:"#00716F",
+                                paddingVertical:30
+                            }}>Don't have an account? Create new user</Text>
                     </View>
-                    
-                </View>
 
+                </View>
+                <Loading loading={loading} />
             </View>
-            </TouchableWithoutFeedback>
-        )
-    }
+        </TouchableWithoutFeedback>
+    )
 }
 const styles = StyleSheet.create({
     container:{
@@ -166,7 +142,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
 
     },
-    
+
     bottomView: {
         flex: 6,
         flexDirection: 'column',
@@ -187,12 +163,12 @@ const styles = StyleSheet.create({
         flexDirection:'row',
         backgroundColor:'#4267b2'
     },
-    loginFacebooktext:{
+    loginFacebookText:{
         backgroundColor:'#4267b2',
         alignSelf:'center',
         fontSize:16,
         color:'#ffffff'
 
     },
-   
+
 });

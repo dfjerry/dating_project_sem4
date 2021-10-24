@@ -13,24 +13,31 @@ import Icon from '@expo/vector-icons/MaterialIcons';
 import { ScrollView } from 'react-native-gesture-handler';
 import Profiles from '../components/Profiles';
 import Messages from '../components/Messages';
+import {useAuth} from "../hooks/useAuth";
+import axios from "axios";
+import {BASE_URL} from "../config";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 const Chat = (props) => {
-    const URL = `https://api.github.com/users`;
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true)
-
+    const {state} = useAuth();
     const pan = useRef(new Animated.ValueXY()).current;
     const list = useRef(new Animated.ValueXY()).current;
-
+    const [user, setUser] = useState(state?.user);
     useEffect(function() {
         const getData = async () => {
-            const resp = await fetch(URL);
-            const data = await resp.json();
-            setData(data);
+            await axios.get(`${BASE_URL}/api/users/matching/${state?.user?.user_id}`).then((res) => {
+                const data = res.data;
+                setData(data);
+            }).catch((err) => {
+                console.log("err chat", err)
+            });
+
             setLoading(false);
         };
-        getData();
+        getData().then(r => r).catch(err => console.log(err));
 
         Animated.timing(pan, {
             toValue:{x:-400,y:0},
@@ -43,9 +50,8 @@ const Chat = (props) => {
             delay:2000,
             useNativeDriver:false
         }).start();
-
-    }, [])
-
+        setUser(state?.user)
+    }, [state])
     return(
         <LinearGradient
             colors={['#f26a50', '#f20042', '#f20045']}
@@ -53,7 +59,7 @@ const Chat = (props) => {
         >
             <View style={styles.headerContainer}>
                 <Text style={styles.header}>Chat</Text>
-                <Icon name='add' color='#fff' size={30}/>
+                {/*<Icon name='add' color='#fff' size={30}/>*/}
             </View>
             <ScrollView
                 horizontal
@@ -68,9 +74,18 @@ const Chat = (props) => {
                             {
                                 data.map((item, index) => (
                                     <Profiles
-                                        key={item.id}
-                                        username={item.login}
-                                        uri={item.avatar_url}
+                                        key={item.user_id}
+                                        first={item?.first_name}
+                                        last={item?.last_name}
+                                        uri={item ? item.photos.length > 0 ? item.photos[0].link : null : null }
+                                        onPress={()=>{
+                                            props.navigation.navigate('Discussion',{
+                                                itemId:item.user_id,
+                                                currentUser: user?.user_id,
+                                                itemName: `${item?.first_name} ${item?.last_name}`,
+                                                itemPic: item ? item.photos.length > 0 ? item.photos[0].link : null : null
+                                            });
+                                        }}
                                     />
                                 ))
                             }
@@ -80,7 +95,7 @@ const Chat = (props) => {
             </ScrollView>
             <View style={styles.ops}>
                 <View style={styles.col}>
-                    <Text style={styles.day}>Sunday</Text>
+                    <Text style={styles.day}>To day</Text>
                     <Entypo name='dots-three-horizontal' color='#000119' size={30}/>
                 </View>
                 <ScrollView>
@@ -93,15 +108,18 @@ const Chat = (props) => {
                                     {
                                         data.map((item, index) => (
                                             <Messages
-                                                key={item.id}
-                                                username={item.login}
-                                                uri={item.avatar_url}
-                                                count={Math.floor(Math.random() * 3)}
+                                                key={item.user_id}
+                                                currentUser={user?.user_id}
+                                                id={item.user_id}
+                                                first={item?.first_name}
+                                                last={item?.last_name}
+                                                uri={item ? item.photos.length > 0 ? item.photos[0].link : null : null }
                                                 onPress={()=>{
                                                     props.navigation.navigate('Discussion',{
-                                                        itemId:item.id,
-                                                        itemName:item.login,
-                                                        itemPic:item.avatar_url
+                                                        itemId:item.user_id,
+                                                        currentUser: user?.user_id,
+                                                        itemName: `${item?.first_name} ${item?.last_name}`,
+                                                        itemPic: item ? item.photos.length > 0 ? item.photos[0].link : null : null
                                                     });
                                                 }}
                                             />

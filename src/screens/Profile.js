@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {
     View,
     Image,
@@ -8,180 +8,220 @@ import {
     ScrollView,
     AsyncStorage,
 } from 'react-native';
-import Icon from '@expo/vector-icons/AntDesign';
+import PROFILE from '../../assets/guest-user.jpg';
+import Ionicons from "@expo/vector-icons/Ionicons";
+import {AuthContext} from "../context/AuthContext";
+import {AntDesign} from "@expo/vector-icons";
+import {useAuth} from "../hooks/useAuth";
+import Icon from "@expo/vector-icons/AntDesign";
+import {TouchableOpacity} from "react-native-gesture-handler";
 
-export default class Login extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            username: "",
-            password: "",
-            name:"",
-            email:"",
-        }
-    }
-    componentDidMount = () =>{
-        AsyncStorage.getItem('username').then((value) => this.setState({'username':value}));
-        AsyncStorage.getItem('password').then((value) => this.setState({'password':value}));
-        AsyncStorage.getItem('name').then((value) => this.setState({'name':value}));
-        AsyncStorage.getItem('email').then((value) => this.setState({'email':value}));
-    }
+export default function Profile({navigation}){
+    const {logout} = React.useContext(AuthContext);
+    const {auth, state} = useAuth();
+    const [user, setUser] = useState(state?.user);
+    useEffect(() => {
+        setUser(state.user)
+    }, [state.user]);
+    return (
+        <ScrollView showsVerticalScrollIndicator={false}>
+            <View style={styles.titleBar}>
+                <TouchableOpacity
+                    onPress={()=>navigation.goBack()}
+                >
+                    <Ionicons name="ios-arrow-back" size={24} color="#52575D"/>
+                </TouchableOpacity>
 
-    render() {
+                {/*<Ionicons name="md-more" size={24} color="#52575D"/>*/}
+                <Text onPress={logout} >Logout</Text>
+            </View>
 
-        const { navigate } = this.props.navigation
-        return (
-            <ScrollView style={{ flex: 1, backgroundColor: '#ffffff' }}
-                showsVerticalScrollIndicator={false}>
-                <Image
-                    source={require('./../images/avartar1.jpg')}
-                    style={styles.avartar}
-
-                />
-                <View style={styles.title}>
-                    <Text style={styles.title}>{this.state.name}</Text>
-                    <Text style={styles.caption}>@{this.state.username}</Text>
+            <View style={{ alignSelf: "center" }}>
+                <View style={styles.profileImage}>
+                    <Image source={PROFILE} style={styles.image} resizeMode="center"/>
                 </View>
-                <View style={styles.userInfo}>
-                    <View style={styles.row}>
-                        <Icon name="enviromento" color="#777777" size={20} />
-                        <Text style={{ color: "#777777", marginLeft: 20 }}>Ha Noi, VietNam</Text>
-                    </View>
-                    <View style={styles.row}>
-                        <Icon name="phone" color="#777777" size={20} />
-                        <Text style={{ color: "#777777", marginLeft: 20 }}>+84 987654321</Text>
-                    </View>
-                    <View style={styles.row}>
-                        <Icon name="mail" color="#777777" size={20} />
-                        <Text style={{ color: "#777777", marginLeft: 20 }}>{this.state.email}</Text>
-                    </View>
-                    <View style={styles.row}>
-                        <Icon name="calendar" color="#777777" size={20} />
-                        <Text style={{ color: "#777777", marginLeft: 20 }}>03-06-1996</Text>
-                    </View>
-                    
+                <View style={styles.dm}>
+                    <AntDesign  onPress={() => {
+                        navigation.navigate('EditUser');
+                    }} name="edit" size={18} color="#DFD8C8" />
                 </View>
+                <View style={styles.active}></View>
+                <View style={styles.add}>
+                    <Ionicons name="ios-add" size={48} color="#DFD8C8" style={{ marginTop: 6, marginLeft: 2 }}/>
+                </View>
+            </View>
 
-                <View style={styles.infoBoxWrapper}>
-                    <View style={[styles.infoBox, {
-                        borderRightColor: '#dddddd',
-                        borderRightWidth: 1
-                    }]}>
-                       
-                    </View>
-                    <View style={styles.infoBox}>
-                       
+            <View style={styles.infoContainer}>
+                <Text style={[styles.text, { fontWeight: "200", fontSize: 36 }]}>{user?.first_name} {user?.last_name}</Text>
+                <Text style={[styles.text, { color: "#AEB5BC", fontSize: 14 }]}>Photographer</Text>
+            </View>
+
+            <View style={styles.statsContainer}>
+                <View style={styles.statsBox}>
+                    <Text style={[styles.text, { fontSize: 24 }]}>34</Text>
+                    <Text style={[styles.text, styles.subText]}>Posts</Text>
+                </View>
+                <View style={[styles.statsBox, { borderColor: "#DFD8C8", borderLeftWidth: 1, borderRightWidth: 1 }]}>
+                    <Text style={[styles.text, { fontSize: 24 }]}>{user?.popularity}</Text>
+                    <Text style={[styles.text, styles.subText]}>Popularity</Text>
+                </View>
+                <View style={styles.statsBox}>
+                    <Text style={[styles.text, { fontSize: 24 }]}>30</Text>
+                    <Text style={[styles.text, styles.subText]}>Following</Text>
+                </View>
+            </View>
+
+            <View style={{ marginTop: 32 }}>
+                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+
+                    {
+                        user?.photos?.map((e, index) => {
+                            return (
+                                <View style={styles.mediaImageContainer}>
+                                    <Image source={(e.link !== null || e.link) ? e.link : "https://assets.i-hr.vn/static/d/user/images/20211020/210-b88339c0-3182-11ec-b893-3fd1a6c0f5ff.jpg"} style={styles.image} resizeMode="cover"/>
+                                </View>
+                            )
+                        })
+                    }
+                </ScrollView>
+                <View style={styles.mediaCount}>
+                    <Text style={[styles.text, { fontSize: 24, color: "#DFD8C8", fontWeight: "300" }]}>{user?.photos?.length}</Text>
+                    <Text style={[styles.text, { fontSize: 12, color: "#DFD8C8", textTransform: "uppercase" }]}>Media</Text>
+                </View>
+            </View>
+            <Text style={[styles.subText, styles.recent]}>Bio</Text>
+            <View style={{ alignItems: "center" }}>
+                <View style={styles.recentItem}>
+                    <View style={{ width: 250 }}>
+                        <Text style={[styles.text, { color: "#41444B", fontWeight: "300" }]}>
+                            {user?.bio}
+                        </Text>
                     </View>
                 </View>
-
-                <View style={styles.menuWrapper}>
-                        <View style={styles.menuItem}>
-                            <Icon name="edit" color="#FF6347" size={25} />
-                            <Text style={styles.menuItemText} >Edit profile</Text>
-                        </View>
-                       
-                        <View style={styles.menuItem}>
-                            <Icon name="wechat" color="#FF6347" size={25} />
-                            <Text style={styles.menuItemText} onPress={() => navigate('Chat')}>Chat</Text>
-                        </View>
-
-                        <View style={styles.menuItem}>
-                            <Icon name="customerservice" color="#FF6347" size={25} />
-                            <Text style={styles.menuItemText}>Support</Text>
-                        </View>
-                        <View style={styles.menuItem}>
-                            <Icon name="setting" color="#FF6347" size={25} />
-                            <Text style={styles.menuItemText}>Settings</Text>
-                        </View>
-                        <View style={styles.menuItem}>
-                            <Icon name="infocirlceo" color="#FF6347" size={25} />
-                            <Text style={styles.menuItemText}>About</Text>
-                        </View>
-                        <View style={styles.menuItem}>
-                            <Icon name="logout" color="#FF6347" size={25} />
-                            <Text style={styles.menuItemText} onPress={() => navigate('Login')}>Logout</Text>
-                        </View>
-                </View>
-            </ScrollView>
-
-
-
-
-        )
-    }
+            </View>
+        </ScrollView>
+    )
 }
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#ffffff',
-        alignItems: 'stretch',
-        justifyContent: 'center',
-        flexDirection: 'column',
-
+        backgroundColor: "#FFF"
     },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        marginTop: 5,
+    text: {
+        fontFamily: "HelveticaNeue",
+        color: "#52575D"
     },
-    avartar: {
-        marginTop: 30,
+    image: {
+        flex: 1,
         height: 200,
         width: 200,
         borderRadius: 100,
-        alignSelf: 'center'
+        overflow: "hidden"
     },
-    userInfo: {
-        paddingHorizontal: 30,
-        marginBottom: 25,
-        marginTop: 10
+    titleBar: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginTop: 24,
+        marginHorizontal: 16
     },
+    subText: {
+        fontSize: 12,
+        color: "#AEB5BC",
+        textTransform: "uppercase",
+        fontWeight: "500"
+    },
+    profileImage: {
+        width: 200,
+        height: 200,
 
-    caption: {
-        fontSize: 14,
-        lineHeight: 14,
-        fontWeight: '500',
-        alignSelf: 'center',
-        marginTop:5,
     },
-    row: {
-        flexDirection: 'row',
-        marginBottom: 10,
+    dm: {
+        backgroundColor: "#41444B",
+        position: "absolute",
+        top: 20,
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        alignItems: "center",
+        justifyContent: "center"
     },
-    infoBoxWrapper: {
-        borderBottomColor: '#dddddd',
-        borderBottomWidth: 1,
-        borderTopColor: '#dddddd',
-        borderTopWidth: 1,
-        flexDirection: 'row',
+    active: {
+        backgroundColor: "#34FFB9",
+        position: "absolute",
+        bottom: 28,
+        left: 10,
+        padding: 4,
+        height: 20,
+        width: 20,
+        borderRadius: 10
+    },
+    add: {
+        backgroundColor: "#41444B",
+        position: "absolute",
+        bottom: 0,
+        right: 0,
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        alignItems: "center",
+        justifyContent: "center"
+    },
+    infoContainer: {
+        alignSelf: "center",
+        alignItems: "center",
+        marginTop: 16
+    },
+    statsContainer: {
+        flexDirection: "row",
+        alignSelf: "center",
+        marginTop: 32
+    },
+    statsBox: {
+        alignItems: "center",
+        flex: 1
+    },
+    mediaImageContainer: {
+        width: 180,
+        height: 200,
+        borderRadius: 12,
+        overflow: "hidden",
+        marginHorizontal: 10
+    },
+    mediaCount: {
+        backgroundColor: "#41444B",
+        position: "absolute",
+        top: "50%",
+        marginTop: -50,
+        marginLeft: 30,
+        width: 100,
         height: 100,
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: 12,
+        shadowColor: "rgba(0, 0, 0, 0.38)",
+        shadowOffset: { width: 0, height: 10 },
+        shadowRadius: 20,
+        shadowOpacity: 1
     },
-    infoBox: {
-        
-        width: '50%',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'row',
+    recent: {
+        marginLeft: 78,
+        marginTop: 32,
+        marginBottom: 6,
+        fontSize: 10
     },
-    menuWrapper: {
-        marginTop: 10,
+    recentItem: {
+        flexDirection: "row",
+        alignItems: "flex-start",
+        marginBottom: 16
     },
-    menuItem: {
-        flexDirection: 'row',
-        paddingVertical: 5,
-        paddingHorizontal: 30,
-        borderBottomColor: '#dddddd',
-        borderBottomWidth: 1,
-        borderTopColor: '#dddddd',
-        borderTopWidth: 1,
-    },
-    menuItemText: {
-        color: '#777777',
-        marginLeft: 10,
-        fontWeight: '600',
-        fontSize: 16,
-        lineHeight: 26,
-    },
-
+    activityIndicator: {
+        backgroundColor: "#CABFAB",
+        padding: 4,
+        height: 12,
+        width: 12,
+        borderRadius: 6,
+        marginTop: 3,
+        marginRight: 20
+    }
 });

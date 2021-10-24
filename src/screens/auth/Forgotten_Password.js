@@ -10,7 +10,6 @@ import {Text,
     Keyboard,
     Alert} from 'react-native';
 
-import Icon from '@expo/vector-icons/AntDesign';
 
 export default class Register extends React.Component {
 
@@ -26,8 +25,10 @@ export default class Register extends React.Component {
                         source={require('./../../images/dating.jpg')}
                         style={{height: Dimensions.get('window').height / 2.5,
                     }}>
-                        <View style={styles.brandView}>
-                        <Text style={styles.brandViewText}>Dating Online</Text>
+                        <View >
+                        {/*    style={styles.brandView}*/}
+                        <Text >Dating Online</Text>
+                        {/*    style={styles.brandViewText}*/}
                         </View>
                     </ImageBackground>
                 </View>

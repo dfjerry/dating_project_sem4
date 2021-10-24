@@ -1,14 +1,17 @@
 import React from 'react';
 import {View,Text,StyleSheet,Image} from 'react-native';
+import {formatAMPM} from "../utils/common";
 
 
-const Received = ({image, message}) => {
+const Received = ({image, message, time, id, last}) => {
     return(
         <View style={styles.container}>
           <Image source={{uri:image}} style={styles.img}/>
           <View>
                <Text style={styles.message}>{message}</Text>
-               <Text style={styles.duration}>12:13 AM</Text>
+              {
+                  id === (last - 1) ? <Text style={styles.duration}>{formatAMPM(time)}</Text> : null
+              }
           </View>
         </View>
     )

@@ -1,8 +1,9 @@
 import React from 'react';
 import {View,Text,StyleSheet} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import {formatAMPM} from "../utils/common";
 
-const Sent = ({message}) => {
+const Sent = ({message, id, last, time}) => {
     return(
         <View style={styles.container}>
             <LinearGradient
@@ -11,7 +12,9 @@ const Sent = ({message}) => {
             >
                 <Text style={styles.text}>{message}</Text>
             </LinearGradient>
-            <Text style={styles.duration}>12:34 AM</Text>
+            {
+                id === (last - 1) ? <Text style={styles.duration}>{formatAMPM(time)}</Text> : null
+            }
         </View>
     )
 }
